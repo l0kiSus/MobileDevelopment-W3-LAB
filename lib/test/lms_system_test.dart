@@ -188,4 +188,53 @@ void main() {
     expect(lms.results.length, 1);
     expect(lms.results.first.score, 85.0);
   });
+
+  test('test removing a result', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S1', studentName: "ronan");
+    lms.addCourse(courseId: 'C1', courseName: "Maths");
+    lms.enrollStudentInCourse(studentId: 'S1', courseId: 'C1');
+
+    lms.addResult(courseId: 'C1', studentId: 'S1', score: 85.0);
+    expect(lms.results.length, 1);
+
+    lms.removeResult(courseId: 'C1', studentId: 'S1');
+    expect(lms.results.length, 0);
+  });
+
+  test('test removing a result that does not exist', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S1', studentName: "ronan");
+    lms.addCourse(courseId: 'C1', courseName: "Maths");
+    lms.enrollStudentInCourse(studentId: 'S1', courseId: 'C1');
+
+    expect(
+      () => lms.removeResult(courseId: 'C1', studentId: 'S1'),
+      throwsA(isA<Exception>()),
+    );
+  });
+
+  test('test removing one result does not affect other results', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S1', studentName: "ronan");
+    lms.addStudent(studentId: 'S2', studentName: "alice");
+    lms.addCourse(courseId: 'C1', courseName: "Maths");
+    lms.enrollStudentInCourse(studentId: 'S1', courseId: 'C1');
+    lms.enrollStudentInCourse(studentId: 'S2', courseId: 'C1');
+
+    lms.addResult(courseId: 'C1', studentId: 'S1', score: 85.0);
+    lms.addResult(courseId: 'C1', studentId: 'S2', score: 90.0);
+    expect(lms.results.length, 2);
+
+    lms.removeResult(courseId: 'C1', studentId: 'S1');
+    expect(lms.results.length, 1);
+    expect(lms.results.first.studentId, 'S2');
+    expect(lms.results.first.score, 90.0);
+    expect(lms.students.first.id, 'S1');
+    expect(lms.students.last.id, 'S2');
+    expect(lms.courses.first.id, 'C1');
+  });
 }

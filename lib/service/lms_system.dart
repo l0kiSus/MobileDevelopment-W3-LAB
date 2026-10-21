@@ -77,6 +77,14 @@ class LmsSystem {
     courses.removeWhere((course) => course.id == courseId);
   }
 
+  void removeResult({required String courseId, required String studentId}) {
+    Result? result = _findResultOrNull(courseId, studentId);
+    if (result == null) {
+      throw Exception('Result for student $studentId in course $courseId not found');
+    }
+    results.removeWhere((result) => result.courseId == courseId && result.studentId == studentId);
+  }
+
   void enrollStudentInCourse({required String studentId, required String courseId}) {
     Student? student = _findStudentOrNull(studentId);
     if (student == null) {
