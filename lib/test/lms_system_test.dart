@@ -144,5 +144,8 @@ void main() {
 
     expect(lms.courses.first.studentIds.contains('S1'), false);
     expect(lms.courses.last.studentIds.contains('S1'), false);
+    expect(lms.students.any((student) => student.id == 'S1'), false);
+    expect(lms.courses.any((course) => course.id == 'C1'), true);
+    expect(lms.courses.any((course) => course.id == 'C2'), true);
   });
 }
