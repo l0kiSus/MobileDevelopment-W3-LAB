@@ -1,9 +1,11 @@
 import '../model/student.dart';
 import '../model/course.dart';
+import '../model/result.dart';
 
 class LmsSystem {
   final List<Student> students = [];
   final List<Course> courses = [];
+  final List<Result> results = [];
  
   void addStudent({required String studentId, required String studentName}) {
     // ! Student shall not exist already
@@ -23,7 +25,32 @@ class LmsSystem {
 
     courses.add(Course(id: courseId, name: courseName));
   }
- 
+
+  void addResult({required String courseId, required String studentId, required double score}) {
+    Course? course = _findCourseOrNull(courseId);
+    if (course == null) {
+      throw Exception('Course $courseId not found');
+    }
+
+    Student? student = _findStudentOrNull(studentId);
+    if (student == null) {
+      throw Exception('Student $studentId not found');
+    }
+
+    if (!course.studentIds.contains(studentId)) {
+      throw Exception('Student $studentId is not enrolled in course $courseId');
+    }
+
+    if (score < 0 || score > 100) {
+      throw Exception('Score must be between 0 and 100');
+    }
+    Result? existingResult = _findResultOrNull(courseId, studentId);
+    if (existingResult != null) {
+      throw Exception('Result for student $studentId in course $courseId already exists');
+    }
+
+    results.add(Result(courseId: courseId, studentId: studentId, score: score));
+  }
  
   void removeStudent({required String studentId}) {
     Student? student = _findStudentOrNull(studentId);
@@ -99,6 +126,15 @@ class LmsSystem {
     for (Course c in courses) {
       if (c.id == courseId) {
         return c;
+      }
+    }
+    return null;
+  }
+
+  Result? _findResultOrNull(String courseId, String studentId) {
+    for (Result r in results) {
+      if (r.courseId == courseId && r.studentId == studentId) {
+        return r;
       }
     }
     return null;

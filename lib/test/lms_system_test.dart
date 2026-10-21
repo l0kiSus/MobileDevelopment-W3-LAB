@@ -148,4 +148,26 @@ void main() {
     expect(lms.courses.any((course) => course.id == 'C1'), true);
     expect(lms.courses.any((course) => course.id == 'C2'), true);
   });
+
+  test('test result', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S1', studentName: "ronan");
+    lms.addCourse(courseId: 'C1', courseName: "Maths");
+    lms.enrollStudentInCourse(studentId: 'S1', courseId: 'C1');
+
+    lms.addResult(courseId: 'C1', studentId: 'S1', score: 85.0);
+    expect(lms.results.length, 1);
+
+    expect(
+      () => lms.addResult(courseId: 'C1', studentId: 'S1', score: 105.0),
+      throwsA(isA<Exception>()),
+    );
+
+    lms.addStudent(studentId: 'S2', studentName: "alice");
+    expect(
+      () => lms.addResult(courseId: 'C1', studentId: 'S2', score: 90.0),
+      throwsA(isA<Exception>()),
+    );
+  });
 }
