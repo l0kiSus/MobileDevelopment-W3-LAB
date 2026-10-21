@@ -170,4 +170,22 @@ void main() {
       throwsA(isA<Exception>()),
     );
   });
+
+  test('test duplicate result', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S1', studentName: "ronan");
+    lms.addCourse(courseId: 'C1', courseName: "Maths");
+    lms.enrollStudentInCourse(studentId: 'S1', courseId: 'C1');
+
+    lms.addResult(courseId: 'C1', studentId: 'S1', score: 85.0);
+    expect(lms.results.length, 1);
+
+    expect(
+      () => lms.addResult(courseId: 'C1', studentId: 'S1', score: 90.0),
+      throwsA(isA<Exception>()),
+    );
+    expect(lms.results.length, 1);
+    expect(lms.results.first.score, 85.0);
+  });
 }
